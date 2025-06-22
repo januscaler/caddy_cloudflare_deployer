@@ -1,0 +1,49 @@
+
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    ports:
+      - "2020:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+    env_file:
+      - .env
+  n8n:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: n8n.Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./prestart.sh:/prestart.sh
+    ports:
+      - "5678:5678"
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: caddy
+    restart: always
+    user: root
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    env_file:
+      - .env
+
+volumes:
+  n8n_data:
+  open-webui:
+  caddy_data:
+  caddy_config:
+
