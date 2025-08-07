@@ -11,6 +11,19 @@ http://centrifugo.januscaler.com  {
   }
 }
 
+http://api.januscaler.com {
+    reverse_proxy 127.0.0.1:9080
+ # tls {
+ # dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+
+  #  }
+
+    header {
+        # Allow WebSockets to function correctly
+        Connection *
+    }
+}
+
 http://n8n.januscaler.com {
     reverse_proxy 127.0.0.1:5678
  # tls {
